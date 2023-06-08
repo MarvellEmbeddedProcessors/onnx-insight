@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright(C) 2023 Marvell.
+
+onnx >= 1.11.0
+numpy >= 1.22.3
+onnxruntime >= 1.10.0
+onnxsim >= 0.3.10
+rich >= 12.4.4

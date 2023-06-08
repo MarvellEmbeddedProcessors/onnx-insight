@@ -1,0 +1,51 @@
+onnxinsight License Summary
+===========================
+
+The onnxinsight contains source code or binaries that are linked
+with a number of open source projects along with code and binaries developed
+by Marvell. This file gives a short overview of the various components and
+pointers to their exact license information.  In the event of a conflict, the
+license file for a specific file or project takes precedence over this file.
+This file is a summary only.
+
+
+onnxinsight Components
+======================
+Components:     analy_func.py, onnxinsight.py, README.md
+License:        BSD-3-Clause
+License Text:   SPDX reference
+Project URL:    Marvell.com
+Directories:    onnx-insight
+
+
+required Components which are not included in this distribution
+===============================================================
+Component:      onnx
+License:        Apache v2.0
+License Text:   https://pypi.org/project/onnx/LICENSE
+Project URL:    https://pypi.org/project/onnx/
+
+Component:      numpy
+License:        BSD-3-Clause
+License Text:   https://github.com/numpy/numpy/blob/main/LICENSE.txt
+Project URL:    https://numpy.org/
+
+Component:      onnxruntime
+License:        MIT License
+License Text:   https://pypi.org/search/?c=License+%3A%3A+OSI+Approved+%3A%3A+MIT+License
+Project URL:    https://pypi.org/project/onnxruntime/
+
+Component:      onnxsim
+License:        Apache v2.0
+License Text:   https://pypi.org/search/?c=License+%3A%3A+OSI+Approved+%3A%3A+Apache+Software+License
+Project URL:    https://pypi.org/project/onnxsim/
+
+Component:      argparse
+License:        OSI approved: Python Software Foundation License
+License Text:   https://pypi.org/search/?c=License+%3A%3A+OSI+Approved+%3A%3A+Python+Software+Foundation+License
+Project URL:    https://pypi.org/project/argparse/
+
+Component:      rich
+License:        MIT License
+License Text:   https://pypi.org/search/?c=License+%3A%3A+OSI+Approved+%3A%3A+MIT+License
+Project URL:    hhttps://pypi.org/project/rich/
