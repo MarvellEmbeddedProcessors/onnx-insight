@@ -1,7 +1,9 @@
-# SPDX-License-Identifier: BSD-3-Clause
-# Copyright(C) 2023 Marvell.
+#onnxinsight Tool
+##This tool is designed for ONNX model analysis.
 
-This tool is designed for ONNX model analysis.
+SPDX-License-Identifier: BSD-3-Clause
+Copyright(C) 2023 Marvell.
+
 Required: Python3 (3.7.x & 3.8.x), requirements.txt
 
 Use python onnxinsight.py -h to explore available features
