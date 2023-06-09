@@ -6,20 +6,22 @@ Copyright(C) 2023 Marvell.
 
 Required: Python3 (3.7.x & 3.8.x), requirements.txt
 
-Use python onnxinsight.py -h to explore available features
+Use 'python onnxinsight.py -h' to explore available features
 ===========================================================
 
-usage: python onnxinsight.py [--help] [--version] [--all] [--info] [--io] [--op] [--node_csv] [--shape] [--batch] [--simplify] onnx_model
+Use 'python onnxinsight.py [--help] [--version] [--all] [--info] [--io] [--op] [--node_csv] [--shape] [--batch] [--simplify] onnx_model'
 
 Given a valid ONNX model as input, performs per-node analysis of the model.
-To get more insights, try different args.
+To get more insight, try different arguments.
 
 Required arguments:
   onnx_model   ONNX model file
 
 Optional arguments:
   -h, --help   show this help message and exit
+
   --version    Show version and exit
+
   --all        Print all available tables
                Print out model, inputs/outputs, operators tables
 
