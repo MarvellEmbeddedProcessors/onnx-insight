@@ -1,5 +1,5 @@
-#onnxinsight Tool
-##This tool is designed for ONNX model analysis.
+# onnxinsight Tool
+## This tool is designed for ONNX model analysis.
 
 SPDX-License-Identifier: BSD-3-Clause
 Copyright(C) 2023 Marvell.
