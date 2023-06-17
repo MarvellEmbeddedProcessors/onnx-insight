@@ -60,7 +60,9 @@ Optional arguments:
                --------------------------
 
   --node_csv   Save model node info to CSV file
-                Save each node "name", "type", "inputs", "output", "params", "macs", "attrs" information to CSV file
+               Save each node "name", "type", "inputs", "output", "params", "macs", "attrs" information to CSV file
+
+  --node_json  Save model node info to json file
 
   --shape      Save shape of intermediate tensor into model
                Run shape inference and save the model with shape information

@@ -414,6 +414,9 @@ class Model:
                     name_shape = "shape" + str(i)
                     dic_node["inputs"][name_inp] = inp
                     dic_node["inputs"][name_shape] = info_shape[inp]
+                    #info_shape might be stored in a google protbuf RepeatScalarContainter that need to be converted to list
+                    #print("type of input shape ",type(dic_node["inputs"][name_shape]))
+                    dic_node["inputs"][name_shape] = list(info_shape[inp])
                     i = i + 1
                 if inp in info_param:
                     node_param += np.prod(info_param[inp])

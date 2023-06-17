@@ -4,6 +4,7 @@
 import argparse
 from analy_func import Model
 import csv
+import json
 
 __version__ = '1.0.0'
 def parse_cmdline_options():
@@ -16,6 +17,7 @@ def parse_cmdline_options():
     parser.add_argument("--io", action='store_true', help = "Print model input/output info table")
     parser.add_argument("--op", action='store_true', help = "Print model operators summary table")
     parser.add_argument("--node_csv", action='store_true', help = "Save model node info to CSV file")
+    parser.add_argument("--node_json", action='store_true', help = "Save model node info to json file")
     parser.add_argument("--shape", action='store_true', help = "Save shape of intermediate tensor into model")
     parser.add_argument("--simplify", action='store_true', help = "Simplify model and save the simplified model")
     parser.add_argument("--batch", type=int, help = "Set model batch size (experimental")
@@ -66,6 +68,17 @@ def main():
     #Print model operators info
     if args.op:
         mod.op()
+
+    #Save model insights into JSON file
+    if args.node_json:
+        dic_model, _ = mod.infonode()
+        print(dic_model)
+        json_string = json.dumps(dic_model, indent=4)
+        json_name = mod.name[:-5] + '.json'
+        json_name = json_name.split("/")[-1]
+        print("Saving model info to JSON in {}".format(json_name))
+        with open(json_name, 'w') as outfile:
+            outfile.write(json_string)
 
     #Save model insights into CSV file
     if args.node_csv:
