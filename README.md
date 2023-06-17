@@ -48,13 +48,30 @@ Optional arguments:
                      Layer specific operator information can be used to verify the MACs and/or to calculate MACs
                      for other operators that perform MAC operations.
            
-    --io         Print model inputs/outputs info table
-                 Model Inputs/outputs Overview
-                ------------------------------------------
-                 | ID | Name | Shape | Type | ByteSize|
-                 ------------------------------------------
-                 | ** | **** | ****  | ***  | *****   |
-                 ------------------------------------------
+
+  --io         Print model inputs/outputs info table
+               Model Inputs/outputs Overview
+               ------------------------------------------
+               | ID | Name | Shape | Type | ByteSize|
+               ------------------------------------------
+               | ** | **** | ****  | ***  | *****   |
+               ------------------------------------------
+
+  --op         Print model operators summary table
+               Model Operators Overview
+               --------------------------
+               | Op Name  |   #   |
+               --------------------------
+               | ****     |  ***  |
+               --------------------------
+               | Total    |  **** |
+               --------------------------
+
+  --node_csv   Save model node info to CSV file
+               Save each node "name", "type", "inputs", "output", "params", "macs", "attrs" information to CSV file
+
+  --node_json  Save model node info to json file
+
 
     --op         Print model operators summary table
                  Model Operators Overview
