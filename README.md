@@ -9,7 +9,7 @@ Required: Python3 (3.7.x & 3.8.x), requirements.txt
 Use python onnxinsight.py -h to explore available features
 ==========================================================
 
-Use python onnxinsight.py [--help] [--version] [--all] [--info] [--io] [--op] [--node_csv] [--shape] [--batch] [--simplify] onnx_model
+Use python onnxinsight.py [--help] [--version] [--all] [--info] [--io] [--op] [--node_csv] [--node_json] [--shape] [--batch] [--simplify] onnx_model
 
 Given a valid ONNX model as input, the tool performs per-node analysis of the model.
 
@@ -29,7 +29,7 @@ Optional arguments:
                  Print out model, inputs/outputs, operators tables
 
     --info       Print model general info table
-                 Model Overview 
+                 Model Overview
                  -----------------------------------
                  | Model Components| Value |
                  -----------------------------------
@@ -42,12 +42,12 @@ Optional arguments:
                  | model_params    | ****  |
                  -----------------------------------
                  Disclaimer: MACs (number of multiply and accumulate operations) account for Convolution, ConvTranspose
-                     and MatMul layers assuming 4dim input tensors for Convolutions and 2dim for Gemm and 
+                     and MatMul layers assuming 4dim input tensors for Convolutions and 2dim for Gemm and
                      2, 3 and 4 dim input tensors for MatMul. This covers many networks, but may not cover all
                      A detailed layer by layer information is provied with --node_csv
                      Layer specific operator information can be used to verify the MACs and/or to calculate MACs
                      for other operators that perform MAC operations.
-                     
+
     --io         Print model inputs/outputs info table
                  Model Inputs/outputs Overview
                  ------------------------------------------
@@ -70,7 +70,6 @@ Optional arguments:
                  Save each node "name", "type", "inputs", "output", "params", "macs", "attrs" information to CSV file
 
     --node_json  Save model node info to json file
-
 
     --op         Print model operators summary table
                  Model Operators Overview
@@ -96,7 +95,7 @@ Optional arguments:
                  For dynamic batch size models, this feature can be used to set the batch size to a fixed dimension,
                  and it is recomended to run the --simplify step afterwards.
                  An alternative tool to try may be the onnxruntime.tools.make_dynamic_shape_fixed
-               
+
 # Examples:
  1. python onnxinsight.py --all model.onnx
  2. python onnxinsight.py --all --node_csv model.onnx
