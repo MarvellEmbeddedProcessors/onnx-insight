@@ -4,15 +4,14 @@
 import onnx
 import numpy as np
 import onnxruntime as ort
-import argparse
 from onnx import numpy_helper
 from onnxsim import simplify
 from onnxsim import model_info
 from rich.table import Table
-from rich.text import Text
 from rich import print
 
-global_warning_flag_macs  = False
+global_warning_flag_macs = False
+
 
 def human_readable_size(num, suffix=""):
     """
@@ -31,6 +30,7 @@ def human_readable_size(num, suffix=""):
             return f"{num:3.2f}{unit}{suffix}"
         num /= 1000.0
     return f"{num:.1f}Y{suffix}"
+
 
 class Model:
     """
@@ -97,7 +97,7 @@ class Model:
         -------
         """
 
-        name_shape = self.name[:-5]+ '_shape.onnx'
+        name_shape = self.name[:-5] + '_shape.onnx'
         onnx.save(self.shape, name_shape)
         print("The model with shape info is saved at {}".format(name_shape))
 
@@ -122,7 +122,8 @@ class Model:
         if orig_batch != 0:
             print("The original model batch is {}".format(orig_batch))
             if batch == orig_batch:
-                print("The original model batch is {} and equal to the desired batch size".format(orig_batch))
+                print("The original model batch is {} and equal to the desired batch size".format(
+                    orig_batch))
                 return self
             else:
                 print("Set the new model batch to {}".format(batch))
@@ -132,7 +133,8 @@ class Model:
                     output.type.tensor_type.shape.dim[0].dim_value = batch
         elif orig_batch == 0:
             print("The original model batch is unknown")
-            if batch == None: batch = 1
+            if batch == None:
+                batch = 1
             print("Set the new model batch to {}".format(batch))
             for inp in self.model.graph.input:
                 inp.type.tensor_type.shape.dim[0].dim_value = batch
@@ -160,7 +162,7 @@ class Model:
             exit()
         return self
 
-    def check(self,batch):
+    def check(self, batch):
         """
         Check the model if it is valid.
 
@@ -174,7 +176,8 @@ class Model:
         """
         if batch == 0 and self.model.graph.input[0].type.tensor_type.shape.dim[0].dim_value == 0:
             print("The model has a dynamic batch size")
-            print("Try setting the batch size with --batch argument, then use the newly generated model")
+            print(
+                "Try setting the batch size with --batch argument, then use the newly generated model")
             print("After setting batch size, you may also want to try run --simplified, then use the simplified model")
             exit()
         try:
@@ -197,11 +200,11 @@ class Model:
         Simplified model
         """
 
-        model_sim, check  = simplify(self.model)
+        model_sim, check = simplify(self.model)
         model_info.print_simplifying_info(self.model, model_sim)
         assert check, "Simplified ONNX model could not be validated"
 
-        name_sim = self.name[:-5]+ '_simplified.onnx'
+        name_sim = self.name[:-5] + '_simplified.onnx'
         onnx.save(model_sim, name_sim)
         print("Simplified ONNX model is saved in {}".format(name_sim))
         return model_sim
@@ -219,8 +222,9 @@ class Model:
         None
         """
 
-        #onnx model components
-        components = ["ir_version", "producer_name", "producer_version", "domain", "model_version", "doc_string"]
+        # onnx model components
+        components = ["ir_version", "producer_name",
+                      "producer_version", "domain", "model_version", "doc_string"]
         table = Table(title="Model Overview", show_lines=True)
         table.add_column('Model Components')
         table.add_column('Value')
@@ -231,7 +235,8 @@ class Model:
         for opset in self.model.opset_import:
             op_v.append(opset.version)
         table.add_row("opset_version", str(op_v))
-        table.add_row("model_ByteSize", human_readable_size(self.model.ByteSize(), suffix="B"))
+        table.add_row("model_ByteSize", human_readable_size(
+            self.model.ByteSize(), suffix="B"))
         _, total_macs = self.infonode()
         table.add_row("model_MACs", human_readable_size(total_macs))
         _, total_params = self.infoparam()
@@ -241,10 +246,10 @@ class Model:
         print(table)
         if global_warning_flag_macs:
             print("WARNING: Total MAC count may be incorrect, as tool identified at least one operator for which MACs could not be determined")
-            print("         Using the simplified model, generated with --simplify argument, may resolve this")
+            print(
+                "         Using the simplified model, generated with --simplify argument, may resolve this")
         print("Disclaimer: model_MACs are based on certain assumptions; see README")
         print("            Layer specific operator information, via --node_csv, can be used to verify MACs")
-
 
     def io(self):
         """
@@ -269,7 +274,7 @@ class Model:
         table.add_column('Shape')
         table.add_column('Type')
         table.add_column('ByteSize')
-        #print inputs
+        # print inputs
         i = 0
         for inp in inputs:
             dim_input = np.prod(inp.shape)
@@ -277,10 +282,12 @@ class Model:
                 size_input = dim_input*2
             if inp.type == "tensor(float)":
                 size_input = dim_input*4
-            else: size_input = dim_input
-            table.add_row("input  "+str(i), inp.name, str(inp.shape), str(inp.type), str(size_input))
+            else:
+                size_input = dim_input
+            table.add_row("input  "+str(i), inp.name,
+                          str(inp.shape), str(inp.type), str(size_input))
             i = i + 1
-        #print outputs
+        # print outputs
         i = 0
         for outp in outputs:
             dim_output = np.prod(outp.shape)
@@ -288,8 +295,10 @@ class Model:
                 size_output = dim_output*2
             if outp.type == "tensor(float)":
                 size_output = dim_output*4
-            else: size_output = dim_output
-            table.add_row("output "+str(i), outp.name, str(outp.shape), str(outp.type), str(size_output))
+            else:
+                size_output = dim_output
+            table.add_row("output "+str(i), outp.name,
+                          str(outp.shape), str(outp.type), str(size_output))
             i += 1
 
         print(" ")
@@ -312,14 +321,12 @@ class Model:
         for node in self.model.graph.node:
             sum_op.append(node.op_type)
 
-        table = Table(title = "Model Operators Overview", show_lines=True)
+        table = Table(title="Model Operators Overview", show_lines=True)
         table.add_column("Op Name")
         table.add_column("#")
         for op_type in sorted(set(sum_op)):
             table.add_row(op_type, str(sum_op.count(op_type)))
-            #print(op_type + "   " +str(sum_op.count(op_type)))
         table.add_row("Total", str(len(sum_op)), style="green")
-        #print("Total" + "   " + str(len(sum_op)))
 
         print(" ")
         print(table)
@@ -344,14 +351,14 @@ class Model:
             for item in getattr(self.shape.graph, att):
                 name = item.name
                 shape = []
-                if att == "initializer": 
+                if att == "initializer":
                     shape = item.dims
                 else:
                     info_dim = item.type.tensor_type.shape.dim
                     for dim in info_dim:
                         shape.append(dim.dim_value)
-                info_shape[name]=shape
-        
+                info_shape[name] = shape
+
         return info_shape
 
     def infoparam(self):
@@ -370,7 +377,7 @@ class Model:
         info_param = {}
         total_params = 0
         for init in self.model.graph.initializer:
-            info_param[init.name]=init.dims
+            info_param[init.name] = init.dims
             weight = numpy_helper.to_array(init)
             total_params += np.prod(weight.shape)
         for node in self.model.graph.node:
@@ -403,7 +410,7 @@ class Model:
             dic_node["type"] = node.op_type
             dic_node["inputs"] = {}
 
-            #each node may contain two types inputs: one is from previous layer, another one is the weight/bias params
+            # each node may contain two types inputs: one is from previous layer, another one is the weight/bias params
             i = 0
             node_param = 0
             info_shape = self.infoshape()
@@ -414,35 +421,33 @@ class Model:
                     name_shape = "shape" + str(i)
                     dic_node["inputs"][name_inp] = inp
                     dic_node["inputs"][name_shape] = info_shape[inp]
-                    #info_shape might be stored in a google protbuf RepeatScalarContainter that need to be converted to list
-                    #print("type of input shape ",type(dic_node["inputs"][name_shape]))
+                    # info_shape might be stored in a google protbuf RepeatScalarContainter that need to be converted to list
                     dic_node["inputs"][name_shape] = list(info_shape[inp])
                     i = i + 1
                 if inp in info_param:
                     node_param += np.prod(info_param[inp])
             dic_node["params"] = int(node_param)
 
-            #each node only has one output
+            # each node only has one output
             dic_node["output"] = {}
             dic_node["output"]["name"] = node.output[0]
             dic_node["output"]["shape"] = info_shape[node.output[0]]
-            #print(dic_node["output"]["shape"])
             if node.op_type == "Constant":
                 dic_node["params"] = int(np.prod(info_shape[node.output[0]]))
-                
+
             if node.op_type == "Conv" or node.op_type == "ConvTranspose":
                 if len(node.attribute) != 0:
                     dic_node["attrs"] = {}
                     dic_node["attrs"]["group"] = 1
-                    dic_node["attrs"]["strides"] = [1,1]
-                    dic_node["attrs"]["dilations"] = [1,1]
+                    dic_node["attrs"]["strides"] = [1, 1]
+                    dic_node["attrs"]["dilations"] = [1, 1]
                     attr_shape = []
                     attr_shape.append(info_shape[node.input[1]][2])
                     attr_shape.append(info_shape[node.input[1]][3])
                     dic_node["attrs"]["kernel_shape"] = attr_shape
                     for att in node.attribute:
                         if att.name == "group":
-                             dic_node["attrs"][att.name] = att.i
+                            dic_node["attrs"][att.name] = att.i
                         else:
                             attr_shape = []
                             for attr_shape_dim in att.ints:
@@ -452,9 +457,9 @@ class Model:
             if node.op_type == "MaxPool" or node.op_type == "AveragePool":
                 if len(node.attribute) != 0:
                     dic_node["attrs"] = {}
-                    dic_node["attrs"]["strides"] = [1,1]
-                    dic_node["attrs"]["dilations"] = [1,1]
-                    dic_node["attrs"]["pads"] = [0,0,0,0]
+                    dic_node["attrs"]["strides"] = [1, 1]
+                    dic_node["attrs"]["dilations"] = [1, 1]
+                    dic_node["attrs"]["pads"] = [0, 0, 0, 0]
                     for att in node.attribute:
                         attr_shape = []
                         for attr_shape_dim in att.ints:
@@ -468,32 +473,30 @@ class Model:
                 if len(node.attribute) != 0:
                     for att in node.attribute:
                         if att.name == "transA":
-                             dic_node["attrs"][att.name] = att.i
+                            dic_node["attrs"][att.name] = att.i
                         elif att.name == "transB":
-                             dic_node["attrs"][att.name] = att.i
+                            dic_node["attrs"][att.name] = att.i
 
-            #Calculate MACs number for Conv/ConvTranspose/Gemm/MatMul ops.
+            # Calculate MACs number for Conv/ConvTranspose/Gemm/MatMul ops.
             if node.op_type == "Conv":
-                #print(node)
-                #print("groups ", dic_node["attrs"]["group"])
                 try:
-                    node_macs = np.prod(info_shape[node.output[0]])*(info_shape[node.input[0]][1]*np.prod(dic_node["attrs"]["kernel_shape"]))/dic_node["attrs"]["group"]
+                    node_macs = np.prod(info_shape[node.output[0]])*(info_shape[node.input[0]][1]*np.prod(
+                        dic_node["attrs"]["kernel_shape"]))/dic_node["attrs"]["group"]
                 except:
                     node_macs = 0
-                    global_warning_flag_macs  = True
+                    global_warning_flag_macs = True
                     print("Warning, could not determine MACs for this Conv")
                     print(node)
 
                 dic_node["macs"] = int(node_macs)
                 total_macs += node_macs
             if node.op_type == "ConvTranspose":
-                #print(node)
-                #print("groups ", dic_node["attrs"]["group"])
                 try:
-                    node_macs = np.prod(info_shape[node.input[0]])*(info_shape[node.output[0]][1]*np.prod(dic_node["attrs"]["kernel_shape"]))/dic_node["attrs"]["group"]
+                    node_macs = np.prod(info_shape[node.input[0]])*(info_shape[node.output[0]][1]*np.prod(
+                        dic_node["attrs"]["kernel_shape"]))/dic_node["attrs"]["group"]
                 except:
                     node_macs = 0
-                    global_warning_flag_macs  = True
+                    global_warning_flag_macs = True
                     print("Warning, could not determine MACs for this ConvTranspose")
                     print(node)
 
@@ -504,28 +507,26 @@ class Model:
                     print("input1 shape ", info_shape[node.input[0]])
                     print("input2 shape ", info_shape[node.input[1]])
                     print(node)
-                    print("calculate macs number failed, please try run --simplified, then use the simplified model")
+                    print(
+                        "calculate macs number failed, please try run --simplified, then use the simplified model")
                     print("WARNING: the total MAC count will not include this operator")
-                    global_warning_flag_macs  = True
+                    global_warning_flag_macs = True
                 else:
-                    #the way mac are calcuated, we do not need to consider transA and transB arguments.
-                    #print(node)
-                    #print("input1 shape ", info_shape[node.input[0]])
-                    #print("input2 shape ", info_shape[node.input[1]])
-                    #print("output shape ", info_shape[node.output[0]])
-                    #print("transA ", dic_node["attrs"]["transA"])
-                    #print("transB ", dic_node["attrs"]["transB"])
+                    # the way mac are calcuated, we do not need to consider transA and transB arguments.
                     try:
-                        node_macs = info_shape[node.input[0]][0]*info_shape[node.input[0]][1]*info_shape[node.output[0]][1]
+                        node_macs = info_shape[node.input[0]][0] * \
+                            info_shape[node.input[0]][1] * \
+                            info_shape[node.output[0]][1]
                         if node_macs == 0:
-                            global_warning_flag_macs  = True
-                            print("Warning, could not determine MACs for this MatMul")
+                            global_warning_flag_macs = True
+                            print(
+                                "Warning, could not determine MACs for this MatMul")
                             print(node)
                             print("input1 shape ", info_shape[node.input[0]])
                             print("input2 shape ", info_shape[node.input[1]])
                     except:
                         node_macs = 0
-                        global_warning_flag_macs  = True
+                        global_warning_flag_macs = True
                         print("Warning, could not determine MACs for this Gemm")
                         print(node)
 
@@ -536,26 +537,22 @@ class Model:
                     print("input1 shape ", info_shape[node.input[0]])
                     print("input2 shape ", info_shape[node.input[1]])
                     print(node)
-                    print("calculate macs number failed, please try run --simplified, then use the simplified model")
+                    print(
+                        "calculate macs number failed, please try run --simplified, then use the simplified model")
                     print("WARNING: the total MAC count will not include this operator")
-                    global_warning_flag_macs  = True
+                    global_warning_flag_macs = True
                 else:
-                    #print(node)
-                    #print("input1 shape ", info_shape[node.input[0]])
-                    #print("input1 dim   ", len(info_shape[node.input[0]]))
-                    #print("input1 last dim   ", info_shape[node.input[0]][len(info_shape[node.input[0]])-1])
-                    #print("input2 shape ", info_shape[node.input[1]])
-                    #print("input2 dim   ", len(info_shape[node.input[1]]))
-                    #print("input2 second to last dim   ", info_shape[node.input[1]][len(info_shape[node.input[1]])-2])
-                    #print("output shape ", info_shape[node.output[0]])
                     if info_shape[node.input[0]][len(info_shape[node.input[0]])-1] != info_shape[node.input[1]][len(info_shape[node.input[1]])-2]:
                         print("input1 shape ", info_shape[node.input[0]])
                         print("input2 shape ", info_shape[node.input[1]])
                         print(node)
-                        print("last dimension of first input does not match second to last dimension of second input")
-                        print("calculate macs number failed, please try run --simplified, then use the simplified model")
-                        print("WARNING: the total MAC count will not include this operator")
-                        global_warning_flag_macs  = True
+                        print(
+                            "last dimension of first input does not match second to last dimension of second input")
+                        print(
+                            "calculate macs number failed, please try run --simplified, then use the simplified model")
+                        print(
+                            "WARNING: the total MAC count will not include this operator")
+                        global_warning_flag_macs = True
                     else:
                         # 2, 3 and 4 dimensional tensors cases
                         # 2D: [M,K][K,N] = [M,N]
@@ -564,19 +561,23 @@ class Model:
                         # 4D: [I,J,M,K][I,J,K,N] = [I,J,M,N]
                         # 4D: [I,J,M,K][J,K,N] = [I,J,M,N]
                         # 4D: [I,J,M,K][K,N] = [I,J,M,N]
-                        #node_macs = np.prod(info_shape[node.output[0]])*info_shape[node.input[0]][len(info_shape[node.input[0]])-1]
                         try:
-                            node_macs = np.prod(info_shape[node.output[0]])*info_shape[node.input[0]][len(info_shape[node.input[0]])-1]
+                            node_macs = np.prod(
+                                info_shape[node.output[0]])*info_shape[node.input[0]][len(info_shape[node.input[0]])-1]
                             if node_macs == 0:
-                                global_warning_flag_macs  = True
-                                print("Warning, could not determine MACs for this MatMul")
+                                global_warning_flag_macs = True
+                                print(
+                                    "Warning, could not determine MACs for this MatMul")
                                 print(node)
-                                print("input1 shape ", info_shape[node.input[0]])
-                                print("input2 shape ", info_shape[node.input[1]])
+                                print("input1 shape ",
+                                      info_shape[node.input[0]])
+                                print("input2 shape ",
+                                      info_shape[node.input[1]])
                         except:
                             node_macs = 0
-                            global_warning_flag_macs  = True
-                            print("Warning, could not determine MACs for this MatMul")
+                            global_warning_flag_macs = True
+                            print(
+                                "Warning, could not determine MACs for this MatMul")
                             print(node)
 
                         dic_node["macs"] = int(node_macs)
